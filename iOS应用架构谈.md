@@ -1,5 +1,7 @@
 # iOS应用架构谈
 https://casatwy.com/iosying-yong-jia-gou-tan-kai-pian.html
+* Introduction to Coding Guidelines for Cocoa
+https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html
 ## App主要工作
 * 调用网络API（如何让业务开发工程师方便安全地调用网络API？然后尽可能保证用户在各种网络环境下都能有良好的体验？）
 * 页面展示（页面如何组织，才能尽可能降低业务方代码的耦合度？尽可能降低业务方开发界面的复杂度，提高他们的效率？）
@@ -52,7 +54,7 @@ https://casatwy.com/iosying-yong-jia-gou-tan-kai-pian.html
 * 客户端业务变化非常之快，做架构时首要考虑因素应当是便于业务方快速满足产品需求，因此需要尽可能提供简单易用效果好的接口给业务方，而不是提供高性能的接口给业务方。
 * 苹果平台的性能非常之棒，正常情况下很少会出现由于性能不够导致的用户体验问题。
 * 苹果平台的优化手段相对有限，甚至于有些时候即便动用了无所不用其极的手段乃至不择手段牺牲了稳定性，性能提高很有可能也只不过是100ms到90ms的差距。10%的性能提升对于服务端来说很不错了，因为服务端动不动就是几十万上百万的访问量，几十万上百万个10ms是很可观的。但是对于客户端的用户来说，他无法感知这10ms的差别，如果从10s优化成9s用户还是有一定感知的，但是100ms变90ms，我觉得吧，还是别折腾了。
-## View层架构是最贴近业务的底层架构
+## View层架构（最贴近业务的底层架构）
 * View代码结构的规定
 * 关于view的布局
 * 何时使用storyboard，何时使用nib，何时使用代码写View
@@ -66,3 +68,54 @@ https://casatwy.com/iosying-yong-jia-gou-tan-kai-pian.html
 * 防止业务代码对架构产生腐蚀
 * 确保传承
 * 保持架构发展的方向不轻易被不合理的意见所左右
+### 按照顺序来分配代码块的位置
+* life cycle
+* Delegate方法实现（把对应的protocol名字带上，例如：#pragma mark - UITableViewDelegate）
+* event response（专门开一个代码区域，所有button、gestureRecognizer的响应事件都放在这个区域里面）
+* getters and setters
+* private methods（一般是用于日期换算、图片裁剪等，ViewController里面不应该写）
+### View的布局
+Autolayout可以考虑使用**Masonry**
+https://github.com/SnapKit/Masonry
+Frame可以考虑**HandyAutoLayout**
+https://github.com/glt3953/HandyAutoLayout/tree/master
+实现简单的东西，用Code一样简单，实现复杂的东西，Code比StoryBoard更简单，所以提倡用code去画view而不是storyboard。
+### 业务方统一派生ViewController
+出于记录用户操作行为数据的需要，或者统一配置页面的目的，会从UIViewController里面派生一个自己的ViewController，来执行一些通用逻辑。
+结论：**没有必要**
+* 使用派生比不使用派生更容易增加业务方的使用成本
+  * 集成成本
+  要么把所有依赖全部搞定，然后基于App环境（比如天猫）下开发Demo，要么就是自己Demo写好之后，按照环境要求改代码。
+  * 上手接受成本
+  * 架构的维护难度
+  尽可能少地使用继承能提高项目的可维护性，跳出面向对象思想(一) 继承：https://casatwy.com/tiao-chu-mian-xiang-dui-xiang-si-xiang-yi-ji-cheng.html
+* 不使用派生手段一样也能达到统一设置的目的
+* 使用AOP
+架构师实现具体方案之前需要考虑的问题
+  * 方案的效果，和最终要达到的目的是什么？
+  方案的效果应该是：
+    * 业务方可以不用通过继承的方法，然后框架能够做到对ViewController的统一配置。
+    * 业务方即使脱离框架环境，不需要修改任何代码也能够跑完代码。业务方的ViewController一旦丢入框架环境，不需要修改任何代码，框架就能够起到它应该起的作用。
+    要实现**不通过业务代码上对框架的主动迎合，使得业务能够被框架感知**这样的功能。细化下来就是两个问题，框架要能够拦截到ViewController的生命周期，另一个问题就是，拦截的定义时机。
+    对于方法拦截，很容易想到**Method Swizzling**，那么我们可以写一个实例，在App启动的时候添加针对UIViewController的方法拦截，这是一种做法。还有另一种做法就是，使用**NSObject的load函数**，在应用启动时自动监听。使用后者的好处在于，这个模块只要被项目包含，就能够发挥作用，不需要在项目里面添加任何代码。
+    关于Method Swizzling手段实现方法拦截，业界也已经有了现成的开源库：Aspects（https://github.com/glt3953/Aspects/tree/master）
+  * 在自己的知识体系里面，是否具备实现这个方案的能力？
+  * 在业界已有的开源组件里面，是否有可以直接拿来用的轮子？
+### MVC
+MVC（Model-View-Controller）是最老牌的的思想，老牌到4人帮的书里把它归成了一种模式，其中Model就是作为数据管理者，View作为数据展示者，Controller作为数据加工者，Model和View又都是由Controller来根据业务需求调配，所以Controller还负担了一个数据流调配的功能。
+座谈会：移动开发中的痛点
+https://www.infoq.cn/news/2015/04/symposium-web-mvc/
+![](assets/16788613208808.jpg)
+**M应该做的事：**
+* 给ViewController提供数据
+* 给ViewController存储数据提供接口
+* 提供经过抽象的业务基本组件，供Controller调度
+
+**C应该做的事：**
+* 管理View Container的生命周期
+* 负责生成所有的View实例，并放入View Container
+* 监听来自View与业务有关的事件，通过与Model的合作，来完成对应事件的业务。
+
+**V应该做的事：**
+* 响应与业务无关的事件，并因此引发动画效果，点击反馈（如果合适的话，尽量还是放在View去做）等。
+* 界面元素表达
