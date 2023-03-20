@@ -111,3 +111,4 @@ https://github.com/glt3953/CTDynamicLibKit
 所以就目前看来，基于动态库的动态部署方案是没办法做到的。
 ## 总结
 我在文中针对业界常见的动态部署方案做了一些总结，并且提供了我自己认为的最佳解决方案以及对应的JSBridge实现（**H5和Native以JSBridge的方式连接的方案进行动态部署**）。
+https://github.com/glt3953/CTJSBridge
