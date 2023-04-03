@@ -28,31 +28,6 @@ Q: 人工智能的发展的关键技术
 
 集成智能系统是将多种人工智能技术集成起来，形成具有综合智能的系统。
 
-Q: 我有一张数据表，叫做 user_events，有两个字段分别叫做 user_id 以及 event_date  请帮我写一句SQL，统计每天的新用户数。新用户的定义是，首次在表内出现，或者连续90天没有在表内出现之后。再一次出现。
-
-可以使用MySQL中的子查询和自连接，构造如下的SQL语句来实现：
-
-```
-SELECT 
-    curr.event_date, COUNT(*) AS new_users_count
-FROM 
-    user_events AS curr
-    LEFT JOIN user_events AS prev ON curr.user_id = prev.user_id AND curr.event_date > prev.event_date AND curr.event_date - INTERVAL 89 DAY <= prev.event_date
-WHERE 
-    prev.user_id IS NULL
-GROUP BY 
-    curr.event_date;
-```
-
-这个SQL语句的大概思路如下：
-
-1. 把表用户表 `user_events` 作为 curr 表，并与其自身自连接，作为 prev 表。
-2. 这里使用左连接，将 curr 表中的每一个用户与 prev 表中的同一个用户做关联，连接条件为 `curr.user_id = prev.user_id`。
-3. 接下来比较两个日期是否符合新用户条件。如果当前的时间点curr.event_date大于之前的时间点prev.event_date，同时两者的时间差小于等于90天，那么说明该条记录为连续存在,不满足新用户条件，可以从结果中忽略，否则说明当前的这条记录是新用户，应当被统计计入结果当中。
-4. 在过滤出符合新用户条件的记录之后，我们通过 GROUP BY 将每个日期的新用户数进行汇总，以便后续分析和使用。
-
-希望能够解决您的问题。
-
 Q: 逻辑回归、SVM、CNN、LSTM 等等的原理和实现
 
 逻辑回归：
