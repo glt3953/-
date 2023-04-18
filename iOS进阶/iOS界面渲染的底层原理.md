@@ -26,6 +26,7 @@ UIView和CALayer都是iOS中用于构建界面元素的关键类,但两者有着
 2. 在drawRect方法中绘制内容,其实调用了underlying CALayer的draw方法。
 3. 在CALayer上设置需要的动画。
 4. 根据需要访问和设置CALayer的属性。
+
 理解UIView和CALayer的关系与区别,是构建高质量界面的基础。
 UIView和CALayer虽然都是iOS界面中的可视化对象，但是它们的作用和功能有本质区别。
 UIView是用户界面中的基本视图对象，用于处理用户交互和布局排版、呈现。UIView是对CALayer的封装，其中包含了一组Core Animation技术，如动画、布局、用户交互等，这使得UIView在设计和使用方面更加灵活方便。
@@ -51,7 +52,9 @@ Quartz 2D是iOS中的**2D绘图引擎**,提供了丰富的API用于手动绘图�
 5. 添加绘图命令构建路径。path.moveTo(x: 0, y: 0); path.addLineTo(x: 100, y: 100)
 6. 描边或填充路径:context.strokePath(using: .none, color: color, lineWidth: 3)
 7. 设置混合模式:context.setBlendMode(.multiply)
+
 使用Quartz 2D可以实现高性能的手动绘图,理解其中的概念和类是绘图技术的基础。熟练使用UIBezierPath等可以完全自定义视图的绘制过程。
+
 Quartz 2D是苹果公司提供的一个2D图形渲染引擎，可以用来进行手动绘图。UIBezierPath是Quartz 2D中的一个类，用于创建和管理复杂的矢量图形。
 绘图的相关概念包括：
 1. 线宽（line width）：绘制线条的宽度。
@@ -110,6 +113,7 @@ Core Animation是iOS中的**动画引擎**,提供了强大的API用于创建基�
 5. 可以通过layer.animationKeys()获取layer上的所有动画,然后通过layer.removeAnimation(forKey: )移除。
 
 使用Core Animation可以实现复杂而高性能的动画,这是构建现代化App必不可少的技能。熟练掌握CABasicAnimation、CAKeyframeAnimation和其他相关类可以创作出美轮美奂的界面与交互。
+
 Core Animation框架是iOS程序中实现动画效果的主要框架之一。其中包含了多个用于实现不同类型动画的类，例如CABasicAnimation和CAKeyframeAnimation等。
 CABasicAnimation类用于实现基本类型的动画效果，例如位置变化、缩放、旋转等。使用CABasicAnimation可以通过简单地设定起始值和结束值来实现动画的过程。
 CAKeyframeAnimation类则更加灵活，可以实现复杂的动画效果。它通过定义多个关键帧来控制动画的路径和过程。例如，你可以设定一个CAKeyframeAnimation的关键帧分别为开始、中间、结束，来实现一个贝塞尔曲线路径的动画效果。
@@ -118,8 +122,6 @@ CAKeyframeAnimation类则更加灵活，可以实现复杂的动画效果。它�
 2. 设定动画的属性和参数，例如起始值、结束值、时间间隔、动画重复次数等。
 3. 将动画对象添加到需要动画的视图的layer层上。
 4. 开始动画。
-
-当然，实现复杂的动画效果需要更深入的了解和练习。建议可以参考苹果官方文档，多做实践。
 ## 掌握UIKit动画API,如UIView动画、UIViewController转场动画等的实现原理
 UIKit提供了丰富的API用于实现视图和控制器层级的动画。主要有:
 1. **UIView动画**:用于对单个视图或其layer进行动画。包括:
