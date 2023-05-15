@@ -30,8 +30,114 @@ DispatchQueue.main.async {
 GCD(Grand Central Dispatch)是Apple提供的用于管理并行任务的API。它提供了几个重要的概念:
 1. **Dispatch queues**:调度队列,用于调度任务的执行。**有串行队列(任务一个个执行)和并发队列(任务同时执行)之分**。Dispatch Queue是Grand Central Dispatch框架中用来调度任务的一种数据结构。Dispatch Queue有两种类型: **Serial Dispatch Queue串行队列和Concurrent Dispatch Queue并行队列**。串行队列中的任务必须按照先进先出的顺序依次执行，而并行队列中的任务可以同时被执行。
 2. **Semaphores**:信号量,用于控制访问共享资源的线程数。可以使用dispatch_semaphore_wait和dispatch_semaphore_signal函数。Semaphore是一种常用于控制同步和并发的技术。在GCD中，可以使用Semaphore来实现等待其他任务完成后才能执行的同步操作。其**原理是通过协调线程之间的信号量来进行同步操作**。
+```objc
+// 创建信号量,初始值设为0
+dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+
+// 线程1
+dispatch_async(dispatch_get_global_queue(0, 0), ^{
+    // 等待信号量,阻塞线程1
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER); 
+    NSLog(@"Thread 1 executed");
+});
+
+// 线程2
+dispatch_async(dispatch_get_global_queue(0, 0), ^{
+    [NSThread sleepForTimeInterval:2]; // 延迟2秒
+    NSLog(@"Thread 2 executed");
+    // 发送信号量,释放线程1
+    dispatch_semaphore_signal(semaphore); 
+});
+
+// 等待所有异步任务执行完
+dispatch_async(dispatch_get_main_queue(), ^{
+    NSLog(@"Done!"); 
+});
+
+运行结果:
+Done!
+Thread 2 executed
+Thread 1 executed
+```
 3. **Barriers**:栅栏,用于将任务分段。当栅栏块中的所有任务完成后,才会继续执行后续任务。可以使用dispatch_barrier_async函数。Barrier是一种在并发编程中常用的技术，可以用来保证并发访问共享资源时的数据一致性。在GCD中，可以使用dispatch_barrier_async或dispatch_barrier_sync来执行屏障操作，通过这些API可以保证在并行队列中执行的任务在屏障之前都会被执行完，在屏障之后的任务会等待所有屏障操作完成。
+```
+//队列
+dispatch_queue_t queue = dispatch_queue_create("com.demo.queue", DISPATCH_QUEUE_CONCURRENT);
+
+// 线程1
+dispatch_async(queue, ^{
+    for (int i = 0; i < 5; i++) {
+        [NSThread sleepForTimeInterval:1]; // 模拟耗时操作
+        NSLog(@"1---%@",[NSThread currentThread]); 
+    }
+});
+
+// 线程2 
+dispatch_async(queue, ^{
+    for (int i = 0; i < 5; i++) {
+        [NSThread sleepForTimeInterval:1]; 
+        NSLog(@"2---%@",[NSThread currentThread]); 
+    }    
+});
+
+// dispatch barrier 
+dispatch_barrier_async(queue, ^{ 
+    NSLog(@"barrier---%@",[NSThread currentThread]); 
+});
+
+// 线程3
+dispatch_async(queue, ^{
+    for (int i = 0; i < 5; i++) {
+        [NSThread sleepForTimeInterval:1];
+        NSLog(@"3---%@",[NSThread currentThread]);
+    }
+});
+
+运行结果:
+2---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+1---<NSThread: 0x6000036f5cc0>{number = 8, name = (null)}
+2---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+1---<NSThread: 0x6000036f5cc0>{number = 8, name = (null)}
+1---<NSThread: 0x6000036f5cc0>{number = 8, name = (null)}
+2---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+2---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+1---<NSThread: 0x6000036f5cc0>{number = 8, name = (null)}
+1---<NSThread: 0x6000036f5cc0>{number = 8, name = (null)}
+2---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+barrier---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+3---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+3---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+3---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+3---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+3---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
+```
 4. **Dispatch groups**:调度组,用于等待一组相关任务完成。可以使用dispatch_group_notify监听组中的任务完成。
+```
+// 执行任务组
+dispatch_group_t group = dispatch_group_create();
+
+// 异步线程1
+dispatch_group_async(group, dispatch_get_global_queue(0, 0), ^{
+    [NSThread sleepForTimeInterval:2];  // 模拟执行任务2秒
+    NSLog(@"Thread 1 executed");
+});
+
+// 异步线程2
+dispatch_group_async(group, dispatch_get_global_queue(0, 0), ^{
+    [NSThread sleepForTimeInterval:3]; // 模拟执行任务3秒
+    NSLog(@"Thread 2 executed");
+});
+
+// 等待任务组执行完毕并执行回调 
+dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+    NSLog(@"All tasks completed!");
+});
+
+运行结果:
+Thread 2 executed
+Thread 1 executed
+All tasks completed!
+```
 
 GCD提供的主要API有:
 1. **dispatch_async**:异步执行任务，dispatch_async用于异步提交任务到Dispatch Queue队列中，可以让任务在后台线程中执行而不会阻塞当前线程。可以指定串行队列或并发队列。
@@ -94,7 +200,7 @@ queue.addOperation(op2)
 6. 使用NSOperation的dependencies属性设置任务依赖关系,添加其他NSOperation对象作为依赖。
 
 NSOperation提供了一套完整的API用于管理自定义的异步任务。
-NSOperation和NSOperationQueue是iOS中非常有用的多线程编程工具。NSOperation是一个封装了待执行任务的抽象类，支持对任务的优先级、依赖、取消、完成状态等一系列管理。NSOperationQueue则是任务队列，管理多个NSOperation实例执行的先后顺序和并发度。其中，NSInvocationOperation是NSOperation的一个子类，用于在新线程上执行一段需要调用的方法。
+NSOperation和NSOperationQueue是iOS中非常有用的多线程编程工具。**NSOperation是一个封装了待执行任务的抽象类，支持对任务的优先级、依赖、取消、完成状态等一系列管理**。NSOperationQueue则是任务队列，管理多个NSOperation实例执行的先后顺序和并发度。其中，NSInvocationOperation是NSOperation的一个子类，用于在新线程上执行一段需要调用的方法。
 以下是一个使用NSInvocationOperation与NSOperationQueue的例子：
 ```
 // 创建子线程任务
