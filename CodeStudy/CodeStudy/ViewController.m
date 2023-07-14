@@ -17,9 +17,63 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    [self queueStudy];
+//    [self operationStudy];
 //    [self groupStudy];
 //    [self barrierStudy];
-    [self semaphoreStudy];
+//    [self semaphoreStudy];
+}
+
+- (void)queueStudy {
+    // 并发队列
+    dispatch_queue_t concurrentQueue = dispatch_queue_create("concurrentQueue", DISPATCH_QUEUE_CONCURRENT);
+
+    // 串行队列
+    dispatch_queue_t serialQueue = dispatch_queue_create("serialQueue", DISPATCH_QUEUE_SERIAL);
+
+    // 在并发队列中执行10个任务
+    dispatch_async(concurrentQueue, ^{
+        for (int i = 0; i < 10; i++) {
+            NSLog(@"Task %d in concurrent queue", i);
+        }
+    });
+
+    // 在串行队列中执行10个任务
+    dispatch_async(serialQueue, ^{
+        for (int i = 0; i < 10; i++) {
+            NSLog(@"Task %d in serial queue", i);
+        }
+    });
+}
+
+- (void)operationStudy {
+    // 创建子线程任务
+    NSInvocationOperation *operation1 = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(task1:) object:@"Task1"];
+    NSInvocationOperation *operation2 = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(task2:) object:@"Task2"];
+    NSInvocationOperation *operation3 = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(task3:) object:@"Task3"];
+
+    // 创建任务队列并添加任务
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperation:operation1]; // 添加任务1
+    [queue addOperation:operation2]; // 添加任务2
+    [operation2 setQueuePriority:NSOperationQueuePriorityHigh];
+
+    // 设置依赖关系，任务3依赖于任务2完成
+    [operation3 addDependency:operation2];
+    [queue addOperation:operation3]; // 添加任务3
+}
+
+- (void)task1:(NSString *)name {
+    NSLog(@"%@", name);
+}
+
+- (void)task2:(NSString *)name {
+    [NSThread sleepForTimeInterval:2]; // 模拟执行任务3秒
+    NSLog(@"%@", name);
+}
+
+- (void)task3:(NSString *)name {
+    NSLog(@"%@", name);
 }
 
 - (void)groupStudy {
