@@ -17,11 +17,42 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    [self queueStudy];
+    [self addCircle];
+//    [self queueStudy];
 //    [self operationStudy];
 //    [self groupStudy];
 //    [self barrierStudy];
 //    [self semaphoreStudy];
+}
+
+- (void)addCircle {
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(100, 100), NO, 0);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+
+    // 设置颜色空间
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextSetFillColorSpace(context, colorSpace);
+    CGColorSpaceRelease(colorSpace);
+
+    // 设置填充颜色
+    CGContextSetFillColorWithColor(context, [UIColor blueColor].CGColor);
+
+    // 创建圆形矢量图形
+    UIBezierPath *circlePath = [UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, 100, 100)];
+
+    // 绘制矢量图形
+    CGContextAddPath(context, circlePath.CGPath);
+    CGContextFillPath(context);
+
+    // 获取绘制的图像
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+
+    UIGraphicsEndImageContext();
+
+    // 显示绘制的图像
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    [self.view addSubview:imageView];
+
 }
 
 - (void)queueStudy {

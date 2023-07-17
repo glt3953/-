@@ -55,7 +55,7 @@ Quartz 2D是iOS中的**2D绘图引擎**,提供了丰富的API用于手动绘图�
 
 使用Quartz 2D可以实现高性能的手动绘图,理解其中的概念和类是绘图技术的基础。熟练使用UIBezierPath等可以完全自定义视图的绘制过程。
 
-Quartz 2D是苹果公司提供的一个2D图形渲染引擎，可以用来进行手动绘图。UIBezierPath是Quartz 2D中的一个类，用于创建和管理复杂的矢量图形。
+**Quartz 2D是苹果公司提供的一个2D图形渲染引擎，可以用来进行手动绘图。UIBezierPath是Quartz 2D中的一个类，用于创建和管理复杂的矢量图形。**
 绘图的相关概念包括：
 1. 线宽（line width）：绘制线条的宽度。
 2. 颜色空间（color space）：指定颜色的方式和表示，例如RGB、CMYK等。

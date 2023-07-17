@@ -17,6 +17,7 @@
 		5AD90E4D2A60F5020039AF05 /* CodeStudyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD90E4C2A60F5020039AF05 /* CodeStudyTests.m */; };
 		5AD90E572A60F5020039AF05 /* CodeStudyUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD90E562A60F5020039AF05 /* CodeStudyUITests.m */; };
 		5AD90E592A60F5020039AF05 /* CodeStudyUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AD90E582A60F5020039AF05 /* CodeStudyUITestsLaunchTests.m */; };
+		5AF7F62E2A64F923004FCD52 /* MethodForward.m in Sources */ = {isa = PBXBuildFile; fileRef = 5AF7F62D2A64F923004FCD52 /* MethodForward.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,8 @@
 		5AD90E522A60F5020039AF05 /* CodeStudyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodeStudyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5AD90E562A60F5020039AF05 /* CodeStudyUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeStudyUITests.m; sourceTree = "<group>"; };
 		5AD90E582A60F5020039AF05 /* CodeStudyUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CodeStudyUITestsLaunchTests.m; sourceTree = "<group>"; };
+		5AF7F62C2A64F923004FCD52 /* MethodForward.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MethodForward.h; sourceTree = "<group>"; };
+		5AF7F62D2A64F923004FCD52 /* MethodForward.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MethodForward.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +118,8 @@
 				5AD90E3E2A60F5020039AF05 /* LaunchScreen.storyboard */,
 				5AD90E412A60F5020039AF05 /* Info.plist */,
 				5AD90E422A60F5020039AF05 /* main.m */,
+				5AF7F62C2A64F923004FCD52 /* MethodForward.h */,
+				5AF7F62D2A64F923004FCD52 /* MethodForward.m */,
 			);
 			path = CodeStudy;
 			sourceTree = "<group>";
@@ -269,6 +274,7 @@
 				5AD90E382A60F4FE0039AF05 /* ViewController.m in Sources */,
 				5AD90E322A60F4FE0039AF05 /* AppDelegate.m in Sources */,
 				5AD90E432A60F5020039AF05 /* main.m in Sources */,
+				5AF7F62E2A64F923004FCD52 /* MethodForward.m in Sources */,
 				5AD90E352A60F4FE0039AF05 /* SceneDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
