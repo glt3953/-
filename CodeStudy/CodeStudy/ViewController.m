@@ -17,12 +17,117 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    [self addCircle];
+    NSDictionary *demoDict = @{@"one":@{@"oneone":@"demo1", @"onetwo":@[@5, @6]}, @"two":@[@1, @2, @3], @"three":@"demo3", @"four":@4};
+    [self enumDict:demoDict];
+    
+//    NSArray *sourceArray = @[@2, @9, @8, @6, @1, @5, @0, @7, @3, @4];
+//    NSArray *sortedArray = [self mergeSort:sourceArray];
+//    NSLog(@"%@", sortedArray);
+    
+//    [self addCircle];
 //    [self queueStudy];
 //    [self operationStudy];
 //    [self groupStudy];
 //    [self barrierStudy];
 //    [self semaphoreStudy];
+}
+
+- (void)enumDict:(NSDictionary *)dict {
+    NSArray *keys = dict.allKeys;
+    for (NSString *key in keys) {
+        if ([dict[key] isKindOfClass:[NSDictionary class]]) {
+            [self enumDict:dict[key]];
+        }
+        
+        if ([dict[key] isKindOfClass:[NSArray class]]) {
+            NSArray *array = dict[key];
+            for (id num in array) {
+                NSLog(@"%@", num);
+            }
+        }
+        
+        if (([dict[key] isKindOfClass:[NSString class]]) || ([dict[key] isKindOfClass:[NSNumber class]])) {
+            NSLog(@"%@", dict[key]);
+        }
+    }
+}
+
+- (void)quickSort:(NSMutableArray *)list left:(NSInteger)left right:(NSInteger)right {
+    // 如果列表为空或只有一个元素，则不需要排序
+    if (!list || [list count] < 2) {
+        return;
+    }
+
+    // 选择分区点
+    NSInteger pivot = [list[left + (right - left) / 2] integerValue];
+    NSInteger i = left;
+    NSInteger j = right;
+    
+    // 分区
+    while (i <= j) {
+        while ([list[i] integerValue] < pivot) {
+            i++;
+        }
+        
+        while ([list[j] integerValue] > pivot) {
+            j--;
+        }
+        
+        if (i <= j) {
+            [list exchangeObjectAtIndex:i withObjectAtIndex:j];
+            i++;
+            j--;
+        }
+    }
+    
+    // 递归
+    if (left < j) {
+        [self quickSort:list left:left right:j];
+    }
+    
+    if (i < right) {
+        [self quickSort:list left:i right:right];
+    }
+}
+
+//归并排序
+- (NSArray *)mergeSort:(NSArray *)array {
+    if (array.count <= 1) {
+        return array;
+    }
+
+    NSInteger middleIndex = array.count / 2;
+    NSArray *leftArray = [array subarrayWithRange:NSMakeRange(0, middleIndex)];
+    NSArray *rightArray = [array subarrayWithRange:NSMakeRange(middleIndex, array.count - middleIndex)];
+
+    return [self merge:[self mergeSort:leftArray] rightArray:[self mergeSort:rightArray]];
+}
+
+- (NSArray *)merge:(NSArray *)leftArray rightArray:(NSArray *)rightArray {
+    NSMutableArray *resultArray = [NSMutableArray array];
+    NSInteger leftIndex = 0, rightIndex = 0;
+
+    while (leftIndex < leftArray.count && rightIndex < rightArray.count) {
+        if ([leftArray[leftIndex] integerValue] < [rightArray[rightIndex] integerValue]) {
+            [resultArray addObject:leftArray[leftIndex]];
+            leftIndex++;
+        } else {
+            [resultArray addObject:rightArray[rightIndex]];
+            rightIndex++;
+        }
+    }
+
+    while (leftIndex < leftArray.count) {
+        [resultArray addObject:leftArray[leftIndex]];
+        leftIndex++;
+    }
+
+    while (rightIndex < rightArray.count) {
+        [resultArray addObject:rightArray[rightIndex]];
+        rightIndex++;
+    }
+    
+    return [resultArray copy];
 }
 
 - (void)addCircle {

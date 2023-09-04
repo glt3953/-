@@ -8,14 +8,13 @@
 A thread's autorelease pool is a stack of pointers. Each pointer is either an object to release, or POOL_BOUNDARY which is an autorelease pool boundary. A pool token is a pointer to the POOL_BOUNDARY for that pool. When the pool is popped, every object hotter than the sentinel is released. The stack is divided into a doubly-linked list of pages. Pages are added and deleted as necessary. Thread-local storage points to the hot page, where newly autoreleased objects are stored.
 `
 以上是objc-781源码中NSObject.mm对于自动释放池的定义。从定义里面可以得知，**自动释放池实际上是一个存放了指针的栈，栈中的指针有两类，一类是等待释放的对象指针，一类是名为POOL_BOUNDARY的哨兵指针**。释放池之间以链表的形式相连，一个Page通常是4096个字节的大小(虚拟内存中的一页)。而前面提到的POOL_BOUNDARY哨兵指针的作用就是标示每个池子的尾端。
-当在MRC中调用autorelease方法或者在ARC中将对象编写在@autoreleaseblock中，对象将会被注册到自动释放池中，当合适的时机到来自动释放池将会向这些对象调用release方法，以释放对象。
+当在MRC中调用autorelease方法或者在ARC中将对象编写在@autoreleaseblock中，对象将会被注册到自动释放池中，当合适的时机到来，自动释放池将会向这些对象调用release方法，以释放对象。
 
 `
 The Application Kit creates an autorelease pool on the main thread at the beginning of every cycle of the event loop, and drains it at the end, thereby releasing any autoreleased objects generated while processing an event. If you use the Application Kit, you therefore typically don’t have to create your own pools. If your application creates a lot of temporary autoreleased objects within the event loop, however, it may be beneficial to create “local” autorelease pools to help to minimize the peak memory footprint.
 `
 以上是Developer Documentation中Apple对于autorelease pool的一个介绍。可以看到在**主线程中，每一个事件循环Runloop的开始，Appkit框架都会为程序创建一个自动释放池，并且在每次Runloop结束时释放所有在池中的对象**。
-需要注意的是，在这里Apple提到了一点：如果程序中临时创建了大量的autorelease对象，那么更好的做法是开发者自行新增一个释放池来最小化内存峰值的发生。
-
+需要注意的是，在这里Apple提到了一点：**如果程序中临时创建了大量的autorelease对象，那么更好的做法是开发者自行新增一个释放池来最小化内存峰值的发生。**
 ## 原理
 ### First of all,最简单的代码
 我们先来写出最常见的@autorelease代码。
@@ -25,7 +24,7 @@ The Application Kit creates an autorelease pool on the main thread at the beginn
 在终端中使用clang -rewrite-objc main.m命令将main.m文件转换成C++代码文件。
 转换出来的代码会很多，我们挑重点的看。
 ![](assets/16796507263602.jpg)
-在C++代码的main函数中，@autoreleasepool{}已经被转换成了如上代码。我们可以看到熟悉的objc_msgSeng，这是**OC的灵魂-消息发送**。
+在C++代码的main函数中，@autoreleasepool{}已经被转换成了如上代码。我们可以看到熟悉的objc_msgSeng，这是**OC的灵魂——消息发送**。
 同时，@autoreleasepool{}变成了__AtAutoreleasePool，看来自动释放池的真实结构就是这个。我们再找一下它的定义在哪里。
 通过搜索关键字，我们找到了它的定义语句。
 ![](assets/16796507735746.jpg)
