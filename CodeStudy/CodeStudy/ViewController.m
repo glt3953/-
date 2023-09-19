@@ -17,6 +17,48 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    NSArray *A = @[@1, @3, @4];
+    NSArray *B = @[@2, @3, @3, @5, @6];
+    NSMutableArray *C = [[NSMutableArray alloc] init];
+    
+    NSUInteger countA = [A count];
+    NSUInteger countB = [B count];
+    NSUInteger i = 0, j = 0;
+    
+    while (i < countA && j < countB) {
+        if (A[i] <= B[j]) {
+            if (A[i] != [C lastObject]) {
+                [C addObject:A[i]];
+            }
+            
+            i++;
+        } else if (A[i] > B[j]) {
+            if (B[j] != [C lastObject]) {
+                [C addObject:B[j]];
+            }
+            
+            j++;
+        }
+    }
+    
+    while (i < countA) {
+        if (A[i] != [C lastObject]) {
+            [C addObject:A[i]];
+        }
+        
+        i++;
+    }
+    
+    while (j < countB) {
+        if (B[j] != [C lastObject]) {
+            [C addObject:B[j]];
+        }
+        
+        j++;
+    }
+    
+    NSLog(@"Array C:%@", C);
+    
     NSDictionary *demoDict = @{@"one":@{@"oneone":@"demo1", @"onetwo":@[@5, @6]}, @"two":@[@1, @2, @3], @"three":@"demo3", @"four":@4};
     [self enumDict:demoDict];
     
