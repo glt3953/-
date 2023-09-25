@@ -25,19 +25,37 @@
     NSUInteger countB = [B count];
     NSUInteger i = 0, j = 0;
     
-    while (i < countA && j < countB) {
-        if (A[i] <= B[j]) {
-            if (A[i] != [C lastObject]) {
-                [C addObject:A[i]];
+    while (i < countA || j < countB) {
+        if ((i < countA && j < countB)) {
+            if (A[i] <= B[j]) {
+                if (A[i] != [C lastObject]) {
+                    [C addObject:A[i]];
+                }
+                
+                i++;
+            } else if (A[i] > B[j]) {
+                if (B[j] != [C lastObject]) {
+                    [C addObject:B[j]];
+                }
+                
+                j++;
+            }
+        } else {
+            if (i < countA) {
+                if (A[i] != [C lastObject]) {
+                    [C addObject:A[i]];
+                }
+                
+                i++;
             }
             
-            i++;
-        } else if (A[i] > B[j]) {
-            if (B[j] != [C lastObject]) {
-                [C addObject:B[j]];
+            if (j < countB) {
+                if (B[j] != [C lastObject]) {
+                    [C addObject:B[j]];
+                }
+                
+                j++;
             }
-            
-            j++;
         }
     }
     
