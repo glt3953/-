@@ -29,7 +29,7 @@ DispatchQueue.main.async {
 ## 掌握GCD中的dispatch queues、semaphores、barriers等概念与用法。会使用dispatch_async、dispatch_sync等API实现并发任务
 GCD(Grand Central Dispatch)是Apple提供的用于管理并行任务的API。它提供了几个重要的概念:
 1. **Dispatch queues**:调度队列,用于调度任务的执行。**有串行队列(任务一个个执行)和并发队列(任务同时执行)之分**。Dispatch Queue是Grand Central Dispatch框架中用来调度任务的一种数据结构。Dispatch Queue有两种类型: **Serial Dispatch Queue串行队列和Concurrent Dispatch Queue并行队列**。串行队列中的任务必须按照先进先出的顺序依次执行，而并行队列中的任务可以同时被执行。
-2. **Semaphores**:信号量,用于控制访问共享资源的线程数。可以使用dispatch_semaphore_wait和dispatch_semaphore_signal函数。Semaphore是一种常用于控制同步和并发的技术。在GCD中，可以使用Semaphore来实现等待其他任务完成后才能执行的同步操作。其**原理是通过协调线程之间的信号量来进行同步操作**。
+2. **Semaphores**:信号量,用于控制访问共享资源的线程数。可以使用**dispatch_semaphore_wait和dispatch_semaphore_signal**函数。Semaphore是一种常用于控制同步和并发的技术。在GCD中，可以使用Semaphore来实现等待其他任务完成后才能执行的同步操作。其**原理是通过协调线程之间的信号量来进行同步操作**。
 ```objc
 // 创建信号量,初始值设为0
 dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
@@ -59,7 +59,7 @@ Done!
 Thread 2 executed
 Thread 1 executed
 ```
-3. **Barriers**:栅栏,用于将任务分段。当栅栏块中的所有任务完成后,才会继续执行后续任务。可以使用dispatch_barrier_async函数。Barrier是一种在并发编程中常用的技术，可以用来保证并发访问共享资源时的数据一致性。在GCD中，可以使用dispatch_barrier_async或dispatch_barrier_sync来执行屏障操作，通过这些API可以保证在并行队列中执行的任务在屏障之前都会被执行完，在屏障之后的任务会等待所有屏障操作完成。
+3. **Barriers**:栅栏,用于将任务分段。当栅栏块中的所有任务完成后,才会继续执行后续任务。可以使用dispatch_barrier_async函数。Barrier是一种在并发编程中常用的技术，可以用来保证并发访问共享资源时的数据一致性。在GCD中，可以使用**dispatch_barrier_async或dispatch_barrier_sync**来执行屏障操作，通过这些API可以保证在并行队列中执行的任务在屏障之前都会被执行完，在屏障之后的任务会等待所有屏障操作完成。
 ```
 //队列
 dispatch_queue_t queue = dispatch_queue_create("com.demo.queue", DISPATCH_QUEUE_CONCURRENT);
@@ -111,7 +111,7 @@ barrier---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
 3---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
 3---<NSThread: 0x6000036c4440>{number = 4, name = (null)}
 ```
-4. **Dispatch groups**:调度组,用于等待一组相关任务完成。可以使用dispatch_group_notify监听组中的任务完成。
+4. **Dispatch groups**:调度组,用于等待一组相关任务完成。可以使用**dispatch_group_notify**监听组中的任务完成。
 ```
 // 执行任务组
 dispatch_group_t group = dispatch_group_create();
